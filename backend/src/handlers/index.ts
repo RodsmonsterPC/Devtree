@@ -5,6 +5,7 @@ import {Request, Response} from "express"
 import { checkPassword, hashPassword } from "../utils/auth"
 import { generateJWT } from "../utils/jwt"
 
+
 export const createAccount = async (req: Request, res: Response)=>{
 
     //Manejar errores
@@ -86,4 +87,38 @@ export const login = async (req:Request, res: Response) =>{
 
      const token = generateJWT({id: user._id})
       res.send(token)
+}
+
+export const getUser = async (req: Request, res: Response) =>{
+
+        res.json(req.user)
+  
+}
+
+export const UpdateProfile = async (req:Request, res: Response) =>{
+    try {
+     const {description} = req.body
+     const handle = slug(req.body.handle, "")
+
+    const handleExist = await User.findOne({handle})
+    if(handleExist && handleExist.email !== req.user.email ){
+        const error = new Error("Nombre de usuario no disponible")
+         res.status(409).json({
+            error : error.message
+        })
+        return
+    }
+
+    //Actualizar el usuario
+
+    req.user.description = description
+    req.user.handle = handle
+    await req.user.save()
+    res.send("Perfil actualizando correctamente")
+
+    } catch (e) {
+        const error = new Error("Hubo un error")
+        res.status(500).json({error: error.message})
+        return
+    }
 }
