@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
-  handle: string;
-  name: string;
-  email: string;
-  password: string;
-  description: string;
+  handle: string
+  name: string
+  email: string
+  password: string
+  description: string
+  image:string
 }
 
 const userSchema = new Schema({
@@ -39,6 +40,10 @@ const userSchema = new Schema({
   description:{
     type:String,
     default: ''
+  },
+  image:{
+    type: String,
+    defualt:''
   }
 });
 
