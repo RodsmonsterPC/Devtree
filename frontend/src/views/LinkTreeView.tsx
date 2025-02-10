@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfile } from "../api/DevTreeAPI";
 import { SocialNetwork, User } from "../types";
 
-social;
+
 
 const LinkTreeView = () => {
   const [devTreeLinks, setDevTreeeLinks] = useState(social);
@@ -43,13 +43,9 @@ const LinkTreeView = () => {
     );
     setDevTreeeLinks(updateLinks);
 
-    queryClient.setQueryData(["user"], (prevData: User) =>{
-      return{
-        ...prevData,
-        links: JSON.stringify(updateLinks)
-      }
-    })
   };
+
+  const links : SocialNetwork[] = JSON.parse(user.links)
 
   const handleEnableLink = (socialNetwork: string) => {
     const updateLinks = devTreeLinks.map((link) => {
@@ -62,12 +58,64 @@ const LinkTreeView = () => {
       }
       return link;
     });
+
+
     setDevTreeeLinks(updateLinks);
 
+
+    let updatedItems : SocialNetwork[] = []
+    const selectedSocialNetwork = updateLinks.find(link => link.name === socialNetwork)
+     if(selectedSocialNetwork?.enabled){
+      const id = links.filter(link => link.id).length + 1
+        if(links.some(link => link.name === socialNetwork)){
+          updatedItems = links.map(link => {
+            if(link.name === socialNetwork){
+              return{
+                ...link,
+                enabled: true,
+                id
+              }
+            }else{
+              return link
+            }
+          })
+        }else{
+          const newItem = {
+            ...selectedSocialNetwork,
+            id
+          }
+      
+          updatedItems = [...links, newItem]
+        }
+   }else{
+   const indexToUpdate = links.findIndex(link => link.name === socialNetwork)
+
+    updatedItems = links.map(link => {
+      if(link.name === socialNetwork){
+        return {
+          ...link,
+          id: 0,
+          enabled: false
+        }
+      } else if (link.id > indexToUpdate && (indexToUpdate !== 0 && link.id === 1)){
+        return{
+          ...link,
+          id: link.id - 1
+        }
+      } else{
+        return link
+      }
+    })
+   }
+
+ 
+
+   console.log(updatedItems)
+    //Almacenar en base de datos
     queryClient.setQueryData(["user"], (prevData: User) =>{
       return{
         ...prevData,
-        links: JSON.stringify(updateLinks)
+        links: JSON.stringify(updatedItems)
       }
     })
   };
@@ -85,7 +133,7 @@ const LinkTreeView = () => {
         ))}
 
         <button className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded font-bold"
-        onClick={() => mutate(user)}
+        onClick={() => mutate(queryClient.getQueryData(["user"])!)}
         
         >Guardar Cambios</button>
       </div>
