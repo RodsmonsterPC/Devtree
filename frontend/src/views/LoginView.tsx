@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../components/ErrorMessage";
 import { LoginForm } from "../types";
@@ -6,6 +6,8 @@ import api from "../config/axios";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 const LoginView = () => {
+
+  const navigate = useNavigate()
 
   const initialValues : LoginForm = {
     email: "",
@@ -20,7 +22,7 @@ const LoginView = () => {
       const {data} = await api.post(`/auth/login`, formData)
       
       localStorage.setItem('AUTH_TOKEN', data)
-      
+      navigate("/admin")
       reset()
     }catch (error){
        if(isAxiosError(error) && error.response){
@@ -43,7 +45,7 @@ const LoginView = () => {
             id="email"
             type="email"
             placeholder="Email de Registro"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("email", {
                 required: "El Email es obligatorio",
                 pattern: {
@@ -62,7 +64,7 @@ const LoginView = () => {
             id="password"
             type="password"
             placeholder="Password de Registro"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("password", {
                 required: "El Password es obligatorio",
             })}
@@ -74,7 +76,7 @@ const LoginView = () => {
 
     <input
         type="submit"
-        className="bg-cyan-400 p-3 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer"
+        className="bg-cyan-400 p-3 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer outline-none"
         value='Iniciar Sesión'
     />
 </form>

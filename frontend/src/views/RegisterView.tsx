@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {isAxiosError} from "axios"
 import type { RegisterForm } from "../types";
@@ -8,12 +8,12 @@ import api from "../config/axios";
 
 const RegisterView = () => {
 
-
-
+  const location = useLocation()
+  const navigate = useNavigate()
   const initialValues : RegisterForm = {
     name : "",
     email: "",
-    handle: "",
+    handle: location?.state?.handle || "",
     password: "",
     password_confirmation: ""
 
@@ -37,6 +37,7 @@ const RegisterView = () => {
      
       toast.success(data)
       reset()
+      navigate('/auth/login')
     }catch (error){
        if(isAxiosError(error) && error.response){
        toast.error(error.response?.data.error)
@@ -60,7 +61,7 @@ const RegisterView = () => {
             id="name"
             type="text"
             placeholder="Tu Nombre"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("name", {
               required: "Tu nombre es obligatorio",
             })}
@@ -75,7 +76,7 @@ const RegisterView = () => {
             id="email"
             type="email"
             placeholder="Email de Registro"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("email", {
               required: "Tu correo es obligatorio",
               pattern: {
@@ -94,7 +95,7 @@ const RegisterView = () => {
             id="handle"
             type="text"
             placeholder="Nombre de usuario: sin espacios"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("handle", {
               required: "Tu handle es obligatorio",
             })}
@@ -109,7 +110,7 @@ const RegisterView = () => {
             id="password"
             type="password"
             placeholder="Password de Registro"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("password", {
               required: "Tu password es obligatorio",
               minLength:{
@@ -132,7 +133,7 @@ const RegisterView = () => {
             id="password_confirmation"
             type="password"
             placeholder="Repetir Password"
-            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
+            className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400 outline-none"
             {...register("password_confirmation", {
               required: "Tu password no es igual",
               validate: (value) => value === password || "Los password no son iguales"
@@ -143,7 +144,7 @@ const RegisterView = () => {
 
         <input
           type="submit"
-          className="bg-cyan-400 p-3 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer"
+          className="bg-cyan-400 p-3 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer outline-none"
           value="Crear Cuenta"
         />
       </form>

@@ -44,11 +44,11 @@ const userSchema = new Schema({
   },
   image:{
     type: String,
-    defualt:''
+    default:''
   },
   links: {
     type: String,
-    defualt: "[]"
+    default: "[]"
   }
 });
 
